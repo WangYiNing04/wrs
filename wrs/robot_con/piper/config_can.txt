@@ -1,0 +1,14 @@
+sudo nano /etc/udev/rules.d/99-can-rename.rules
+
+添加以下内容:
+# 重命名特定USB端口的CAN设备为 can_left
+KERNELS=="3-2.1.1.1:1.0", SUBSYSTEM=="net", ACTION=="add", NAME="can_left"
+# 重命名特定USB端口的CAN设备为 can_right
+KERNELS=="3-2.1.1.2:1.0", SUBSYSTEM=="net", ACTION=="add", NAME="can_right"
+
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+
+重新插拔
+
+ifconfig or ip link show        
