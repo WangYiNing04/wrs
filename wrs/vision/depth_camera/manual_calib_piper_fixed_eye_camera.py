@@ -75,9 +75,15 @@ class ManualCalibrationBase(ABC):
         self.rotation_resolution = rotation_resolution
 
         # add task
+<<<<<<< HEAD
         taskMgr.doMethodLater(5, self.sync_rbt, "sync rbt", )
         taskMgr.add(self.adjust, "manual adjust the mph")
         taskMgr.doMethodLater(5, self.sync_pcd, "sync mph", )
+=======
+        taskMgr.doMethodLater(2, self.sync_rbt, "sync rbt", )
+        taskMgr.add(self.adjust, "manual adjust the mph")
+        taskMgr.doMethodLater(1, self.sync_pcd, "sync mph", )
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
     @abstractmethod
     def get_pcd(self) -> np.ndarray:
@@ -183,7 +189,11 @@ class ManualCalibrationBase(ABC):
         Save manual calibration results
         :return:
         """
+<<<<<<< HEAD
         dump_json({'affine_mat': self._init_calib_mat.tolist()}, "/home/wyn/PycharmProjects/wrs_tiaozhanbei/wrs/vision/depth_camera/manual_calibration_piper_middle.json", reminder=False)
+=======
+        dump_json({'affine_mat': self._init_calib_mat.tolist()}, "manual_calibration_fixed_eye.json", reminder=False)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
     def plot(self, task=None):
         """
@@ -196,7 +206,11 @@ class ManualCalibrationBase(ABC):
             self._plot_node_rbt.detach()
         if self._plot_node_pcd is not None:
             self._plot_node_pcd.detach()
+<<<<<<< HEAD
         self._plot_node_rbt = self._rbt_s.gen_meshmodel(alpha=1)
+=======
+        self._plot_node_rbt = self._rbt_s.gen_meshmodel(alpha=.8)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         self._plot_node_rbt.attach_to(base)
         pcd = self._pcd
         if pcd is not None:
@@ -263,8 +277,14 @@ class ManualCalibrationBase(ABC):
 
         # --- Update Scene only if something changed ---
         if was_adjusted:
+<<<<<<< HEAD
             self.plot()  
             self.save()
+=======
+            self.plot()
+            # IMPORTANT: We have removed self.save() from this loop.
+            # Call self.save() manually when you are done with the calibration.
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
         return task.again
 
@@ -353,8 +373,13 @@ if __name__ == "__main__":
         rbt_x=rbtx, 
         sensor_hdl=rs_pipe,
         init_calib_mat=init_mat,
+<<<<<<< HEAD
         move_resolution=0.001,  # 1cm resolution
         rotation_resolution=np.radians(0.1)  # 5 degree resolution
+=======
+        move_resolution=0.01,  # 1cm resolution
+        rotation_resolution=np.radians(10)  # 5 degree resolution
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     )
     
     print("固定眼相机标定说明：")

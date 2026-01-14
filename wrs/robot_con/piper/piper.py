@@ -65,8 +65,14 @@ from __future__ import annotations
 
 import platform
 import subprocess
+<<<<<<< HEAD
 from typing import Iterable, Tuple, Literal
 import time
+=======
+import time
+from typing import Iterable, Tuple, Literal
+
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 import numpy as np
 
 try:
@@ -245,7 +251,11 @@ class PiperArmController:
             *,
             is_radians: bool = True,
             speed: int = 50,
+<<<<<<< HEAD
             block: bool = False,
+=======
+            block: bool = True,
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
             tolerance: float = 0.01,
     ) -> None:
         """Move the arm to a joint configuration (Move J).
@@ -315,9 +325,13 @@ class PiperArmController:
             # Wait until motion status indicates arrival or joint error below tolerance
             self._wait_until_joint_target_reached(angles_deg, tol_deg)
 
+<<<<<<< HEAD
 
 
     def move_p(self, pos: Iterable[float], rot: np.ndarray, *, is_euler: bool = False, speed: int = 50, block: bool = False) -> None:
+=======
+    def move_p(self, pos: Iterable[float], rot: np.ndarray, *, is_euler: bool = False, speed: int = 50) -> None:
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         """Move the end effector to a pose using position control (Move P).
 
         Parameters
@@ -360,6 +374,7 @@ class PiperArmController:
         self._interface.MotionCtrl_2(ctrl_mode=0x01, move_mode=0x00,
                                      move_spd_rate_ctrl=int(speed), is_mit_mode=0x00)
         # Send the end pose
+<<<<<<< HEAD
         self._interface.EndPoseCtrl(
                 int(pos_units[0]),
                 int(pos_units[1]),
@@ -445,6 +460,12 @@ class PiperArmController:
 
     def move_l(self, pos: Iterable[float],
                 rot: np.ndarray, *, is_euler: bool = False, speed: int = 50, block: bool = False,) -> None:
+=======
+        self._interface.EndPoseCtrl(pos_units[0], pos_units[1], pos_units[2],
+                                    euler_units[0], euler_units[1], euler_units[2])
+
+    def move_l(self, pos: Iterable[float], rot: np.ndarray, *, is_euler: bool = False, speed: int = 50) -> None:
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         """Move the end effector using linear Cartesian interpolation (Move L).
 
         The parameters are the same as for :meth:`move_p`.  The only
@@ -466,14 +487,19 @@ class PiperArmController:
                 raise ValueError("rot must be a 3x3 rotation matrix")
             euler = rm.rotmat_to_euler(rotmat)
         pos_units = (position * 1_000_000.0).astype(int)
+<<<<<<< HEAD
         pos_units = [int(v) for v in pos_units]  # ✅ 转换为原生整数
         euler_units = (np.degrees(euler) * 1000.0).astype(int)
         euler_units = [int(v) for v in euler_units]  # ✅ 同理
+=======
+        euler_units = (np.degrees(euler) * 1000.0).astype(int)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         # Set motion mode to linear control (Move L = 0x02)
         self._interface.MotionCtrl_2(ctrl_mode=0x01, move_mode=0x02,
                                      move_spd_rate_ctrl=int(speed), is_mit_mode=0x00)
         self._interface.EndPoseCtrl(pos_units[0], pos_units[1], pos_units[2],
                                     euler_units[0], euler_units[1], euler_units[2])
+<<<<<<< HEAD
         if block:
             self._wait_until_ee_pose_reached(
                 target_pos=position,
@@ -542,6 +568,17 @@ class PiperArmController:
                            start_frame_id=1,
                            speed=20,
                            control_frequency=0.01, ):
+=======
+
+    def move_jntspace_path(self,
+                           path,
+                           is_radians=True,
+                           max_jntvel: list = None,
+                           max_jntacc: list = None,
+                           start_frame_id=1,
+                           speed=50,
+                           control_frequency=0.3, ):
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         """
         :param path: [jnt_values0, jnt_values1, ...], results of motion planning
         :param max_jntvel: 1x6 list to describe the maximum joint speed for the arm
@@ -557,13 +594,18 @@ class PiperArmController:
             # # Refer to https://www.ufactory.cc/_files/ugd/896670_9ce29284b6474a97b0fc20c221615017.pdf
             # # the robotic arm can accept joint position commands sent at a fixed high frequency like 100Hz
             control_frequency = control_frequency
+<<<<<<< HEAD
             tpply = pwp.PiecewisePolyTOPPRA() 
+=======
+            tpply = pwp.PiecewisePolyTOPPRA()
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
             interpolated_path = tpply.interpolate_by_max_spdacc(path=path,
                                                                 ctrl_freq=control_frequency,
                                                                 max_vels=max_jntvel,
                                                                 max_accs=max_jntacc,
                                                                 toggle_debug=False)
             interpolated_path = interpolated_path[start_frame_id:]
+<<<<<<< HEAD
             for jnt_values in interpolated_path:
                 self.move_j(
                     joint_angles=jnt_values,
@@ -571,6 +613,17 @@ class PiperArmController:
                     speed=speed,
                     block=False, )
                 time.sleep(.01)
+=======
+            if is_radians:
+                interpolated_path = np.degrees(interpolated_path)
+            for jnt_values in interpolated_path:
+                self.move_j(
+                    joint_angles=jnt_values,
+                    is_radians=is_radians,
+                    speed=speed,
+                    block=False, )
+                time.sleep(.05)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
             return
         else:
             raise NotImplementedError
@@ -597,7 +650,10 @@ class PiperArmController:
         ], dtype=float) / 1000.0
         return np.radians(values_deg)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     def get_joint_values_raw(self):
         """Return the current joint angles in raw 0.001° units.
 
@@ -729,6 +785,7 @@ class PiperArmController:
         self.gripper_control(angle=0.0, effort=effort, enable=True)
 
     # ------------------------------------------------------------------
+<<<<<<< HEAD
     # Master-Slave Control (Teleoperation)
     # ------------------------------------------------------------------
     def configure_master_slave(
@@ -873,6 +930,8 @@ class PiperArmController:
         self.configure_master_slave(mode="disable", **kwargs)
 
     # ------------------------------------------------------------------
+=======
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     # Miscellaneous
     # ------------------------------------------------------------------
     def get_status(self):
@@ -928,6 +987,7 @@ class PiperArmController:
         """
         self._interface.ReqMasterArmMoveToHome(mode)
 
+<<<<<<< HEAD
     def _rotation_matrix_angle(self, R: np.ndarray) -> float:
         """
         Compute the rotation angle (rad) represented by a rotation matrix.
@@ -937,6 +997,8 @@ class PiperArmController:
         cos_theta = np.clip(cos_theta, -1.0, 1.0)
         return float(np.arccos(cos_theta))
 
+=======
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     # ------------------------------------------------------------------
     # Internal helper methods
     # ------------------------------------------------------------------
@@ -965,6 +1027,7 @@ class PiperArmController:
             # Check maximum absolute error
             if np.max(np.abs(current - target)) <= tolerance_deg:
                 break
+<<<<<<< HEAD
             # TODO this does not work reliably; disable for now
             time.sleep(0.05)
 
@@ -1074,3 +1137,63 @@ if __name__ == "__main__":
 
 
     
+=======
+            # Additionally check motion status if available
+            # TODO this does not work reliably; disable for now
+            # try:
+            #     status = self._interface.GetArmStatus().arm_status
+            #     # The Piper SDK defines motion_status: 0x00 means arrived,
+            #     # 0x01 means not arrived【925549962753972†L146-L149】.  If arrived, exit.
+            #     if getattr(status, 'motion_status', None) == 0x00:
+            #         break
+            # except Exception:
+            #     # Ignore exceptions (e.g., missing attributes)
+            #     pass
+            # Sleep a short time to avoid busy waiting
+            time.sleep(0.05)
+
+
+if __name__ == "__main__":
+    import time
+    can_name = "can1"  # Change this to your CAN interface name if needed
+    if platform.system() == "Windows":
+        can_name = "1"
+    print("Creating PiperArmController...")
+    arm = PiperArmController(can_name=can_name, has_gripper=True)
+
+    print("Current joint angles (deg):")
+    print(np.degrees(arm.get_joint_values()))
+
+    print("Current end-effector pose:")
+    pos, rot = arm.get_pose()
+    print("Position (m):", pos)
+    print("Rotation matrix:\n", rot)
+
+    print("Current raw pose (m, rad):", arm.get_pose_raw()[:3],
+          np.degrees(arm.get_pose_raw()[3:]))
+
+    print("Is enabled:", arm.is_enabled)
+
+    print("Go zero joints...")
+    arm.move_j(
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        speed=10,
+        block=True
+    )
+    print("I have already run")
+    time.sleep(4)
+    arm.open_gripper()
+    time.sleep(1)
+    arm.close_gripper()
+    for i in range(100):
+        arm.move_j(
+            [0.0, 0.0, 0.0, 0.0, 0.0, i * np.pi / 200],
+            block=False
+        )
+        time.sleep(0.01)
+    # if arm.is_enabled:
+    #     print("Disabling...")
+    #     arm.disable()
+    #     time.sleep(1.0)
+    #     print("Is enabled:", arm.is_enabled)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6

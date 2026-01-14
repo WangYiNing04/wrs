@@ -76,9 +76,15 @@ class ManualCalibrationBase(ABC):
         self.rotation_resolution = rotation_resolution
 
         # add task
+<<<<<<< HEAD
         taskMgr.doMethodLater(5 ,self.sync_rbt, "sync rbt", )
         taskMgr.add(self.adjust, "manual adjust the mph")
         taskMgr.doMethodLater(5 ,self.sync_pcd, "sync mph", )
+=======
+        taskMgr.doMethodLater(5, self.sync_rbt, "sync rbt", )
+        taskMgr.add(self.adjust, "manual adjust the mph")
+        taskMgr.doMethodLater(5, self.sync_pcd, "sync mph", )
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
         # taskMgr.add(self.sync_rbt_once, "sync_rbt_once")
         # taskMgr.add(self.adjust, "manual adjust the mph")
@@ -224,7 +230,11 @@ class ManualCalibrationBase(ABC):
         Save manual calibration results
         :return:
         """
+<<<<<<< HEAD
         dump_json({'affine_mat': self._init_calib_mat.tolist()}, "/home/wyn/PycharmProjects/wrs_tiaozhanbei/wrs/vision/depth_camera/manual_calibration_piper_left.json", reminder=False)
+=======
+        dump_json({'affine_mat': self._init_calib_mat.tolist()}, "manual_calibration_realman.json", reminder=False)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
     def plot(self, task=None):
         """
@@ -237,7 +247,11 @@ class ManualCalibrationBase(ABC):
             self._plot_node_rbt.detach()
         if self._plot_node_pcd is not None:
             self._plot_node_pcd.detach()
+<<<<<<< HEAD
         self._plot_node_rbt = self._rbt_s.gen_meshmodel(alpha=1)
+=======
+        self._plot_node_rbt = self._rbt_s.gen_meshmodel(alpha=0)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         self._plot_node_rbt.attach_to(base)
         pcd = self._pcd
         if pcd is not None:
@@ -363,10 +377,21 @@ if __name__ == "__main__":
     #加载左臂
     rbtx_left = PiperArmController(can_name="can0", has_gripper=True)
 
+<<<<<<< HEAD
+=======
+    #加载右臂
+    rbtx_right = PiperArmController(can_name="can1", has_gripper=True)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
     #左臂base与世界坐标系重合
     rbt_left = Piper(enable_cc=True, rotmat=rm.rotmat_from_euler(0, 0, 0), name='piper_left')
     
+<<<<<<< HEAD
+=======
+    # #右臂在world Y轴 -0.6m处
+    rbt_right = Piper(enable_cc=True, rotmat=rm.rotmat_from_euler(0, 0, 0),pos=[0, -0.6, 0], name='piper_right')
+
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     # 读取三个标定矩阵
     init_mat = load_calibration_matrix_from_json("/home/wyn/PycharmProjects/wrs_tiaozhanbei/wrs/vision/depth_camera/manual_calibration_piper_left.json")
 
@@ -382,6 +407,7 @@ if __name__ == "__main__":
 
     xarm_mc = RealmanManualCalib(rbt_s=rbt_left, rbt_x=rbtx_left, sensor_hdl=rs_pipe,
                                  init_calib_mat=init_mat,
+<<<<<<< HEAD
                                  move_resolution=0.0025,
                                  rotation_resolution=np.radians(10))
     
@@ -406,6 +432,24 @@ if __name__ == "__main__":
     #     return task.again
 
     # taskMgr.doMethodLater(0.01, sync_right_arm, "sync right arm")
+=======
+                                 move_resolution=0.005,
+                                 rotation_resolution=np.radians(10))
+    
+    # 同步右臂的任务
+    right_arm = None
+
+    def sync_right_arm(task):
+        global right_arm
+        if right_arm is not None:
+            right_arm.detach()
+        rbt_jnt_val = rbtx_right.get_joint_values()
+        rbt_right.fk(rbt_jnt_val, update=True)
+        right_arm = rbt_right.gen_meshmodel(alpha=1).attach_to(base)
+        return task.again
+
+    taskMgr.doMethodLater(0.01, sync_right_arm, "sync right arm")
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
     base.run()
 

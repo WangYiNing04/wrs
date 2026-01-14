@@ -75,8 +75,11 @@ import wrs.modeling.collision_model as mcm
 
 # Attempt to import the Trac IK solver.  If unavailable, numerical IK
 # provided by the joint linkage controller (JLC) will be used instead.
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 try:
     from trac_ik import TracIK
 
@@ -168,7 +171,11 @@ class Piper(mi.ManipulatorInterface):
             os.path.join(current_file_dir, "meshes", "link4.STL"))
         self.jlc.jnts[3].lnk.loc_pos = np.array([0.0, 0.0, 0.0])
         # link4 has no additional rotation
+<<<<<<< HEAD
         self.jlc.jnts[3].lnk.loc_rotmat = rm.rotmat_from_euler(0.0, 0.0, np.pi)
+=======
+        self.jlc.jnts[3].lnk.loc_rotmat = rm.rotmat_from_euler(0.0, 0.0, 0.0)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         self.jlc.jnts[3].lnk.cmodel.rgba = np.array([0.3, 0.3, 0.3, 1.0])
 
         # --- Joint 5 (link4 -> link5) ---
@@ -186,11 +193,18 @@ class Piper(mi.ManipulatorInterface):
 
         # --- Joint 6 (link5 -> link6) ---
         self.jlc.jnts[5].loc_pos = np.array([0.0, 0.091, 0.0014165])
+<<<<<<< HEAD
         # orig_rotmat = rm.rotmat_from_euler(-1.5708, -1.5708, 0.0)
         corrected_rotmat_direct = rm.rotmat_from_euler(1.5708, 0.0, 3.14159)
         self.jlc.jnts[5].loc_rotmat = corrected_rotmat_direct
         self.jlc.jnts[5].loc_motion_ax = np.array([0.0, 0.0, 1.0])
         self.jlc.jnts[5].motion_range = np.array([-2.094, 2.094])
+=======
+        # rotation: roll=−90°, pitch=−90°
+        self.jlc.jnts[5].loc_rotmat = rm.rotmat_from_euler(-1.5708, -1.5708, 0.0)
+        self.jlc.jnts[5].loc_motion_ax = np.array([0.0, 0.0, 1.0])
+        self.jlc.jnts[5].motion_range = np.array([-3.14, 3.14])
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         # self.jlc.jnts[5].lnk.cmodel = mcm.CollisionModel(
         #     os.path.join(current_file_dir, "meshes", "camera_v3.dae"))
         # In the URDF the camera (link6) mesh has an offset
@@ -200,20 +214,35 @@ class Piper(mi.ManipulatorInterface):
 
         # Finalise the joint linkage chain and set up IK solver
         self.jlc.finalize(ik_solver=ik_solver, identifier_str=name)
+<<<<<<< HEAD
         self.loc_tcp_pos = np.array([0.0, 0.0, 0.0])
         self.loc_tcp_rotmat = np.eye(3)
         # z_rot_90 = rm.rotmat_from_euler(0.0, 0.0, -np.pi / 2)
         #
         # # 右乘操作 (A = A @ B) 实现绕局部坐标系旋转
         # self.loc_tcp_rotmat = self.loc_tcp_rotmat @ z_rot_90
+=======
+
+        # Define the tool centre point (TCP) at the end of link6.  By
+        # default the TCP coincides with the end of link6 but it can be
+        # adjusted by changing loc_tcp_pos and loc_tcp_rotmat after
+        # instantiation.
+        self.loc_tcp_pos = np.array([0.0, 0.0, 0.0])
+        self.loc_tcp_rotmat = np.eye(3)
+
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         # Configure the Trac IK solver when available
         if is_trac_ik:
             directory = os.path.abspath(os.path.dirname(__file__))
             urdf = os.path.join(directory, "piper_description_v100_camera.urdf")
             # base_link and link6 are defined in the URDF; use them for IK
+<<<<<<< HEAD
             self._ik_solver = TracIK("arm_base", "link6", urdf,
                                      timeout=0.5, epsilon=1e-4,
                                      solver_type="Distance")
+=======
+            self._ik_solver = TracIK("arm_base", "link6", urdf)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         else:
             self._ik_solver = None
 
@@ -221,9 +250,12 @@ class Piper(mi.ManipulatorInterface):
         if self.cc is not None:
             self.setup_cc()
 
+<<<<<<< HEAD
         self.joint_min = np.array([jnt.motion_range[0] for jnt in self.jlc.jnts])
         self.joint_max = np.array([jnt.motion_range[1] for jnt in self.jlc.jnts])
 
+=======
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     def setup_cc(self) -> None:
         """Configure pairs of links for self‑collision checking."""
         # Add each link to the collision checker and establish
@@ -238,7 +270,11 @@ class Piper(mi.ManipulatorInterface):
         l4 = self.cc.add_cce(self.jlc.jnts[4].lnk)
         # l5 = self.cc.add_cce(self.jlc.jnts[5].lnk)
         from_list = [l3, l4]
+<<<<<<< HEAD
         into_list = [lb, l0, l1, l2]
+=======
+        into_list = [lb, l0, l1,l2]
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         self.cc.set_cdpair_by_ids(from_list, into_list)
 
     def ik(self, tgt_pos: np.ndarray, tgt_rotmat: np.ndarray,
@@ -281,6 +317,7 @@ class Piper(mi.ManipulatorInterface):
 if __name__ == '__main__':
     import wrs.visualization.panda.world as wd
 
+<<<<<<< HEAD
     base = wd.World(cam_pos=[2, 0, 1], lookat_pos=[0, 0, 0])
     arm = Piper()
     mgm.gen_frame().attach_to(base)
@@ -313,3 +350,28 @@ if __name__ == '__main__':
     rotation_matrix = rm.rotmat_from_euler(-3.21875,   1.109375,  3.203125)
     joint_values = arm.ik(tgt_pos=position, tgt_rotmat=rotation_matrix, toggle_dbg=True)
     print(joint_values)
+=======
+    # Visual test for the Piper arm model.
+    base = wd.World(cam_pos=[2, 0, 1], lookat_pos=[0, 0, 0])
+    mgm.gen_frame().attach_to(base)
+    arm = Piper(enable_cc=True)
+    tgt_pos = np.array([0.378, -0.099417, 0.047612])
+    tgt_rotmat = rm.rotmat_from_euler(3.0369, -0.0483, 2.7970)
+    mgm.gen_frame(pos=tgt_pos, rotmat=tgt_rotmat).attach_to(base)
+    jnt_values = arm.ik(tgt_pos=tgt_pos, tgt_rotmat=tgt_rotmat, toggle_dbg=False)
+    print(jnt_values)
+    if jnt_values is not None:
+        arm.goto_given_conf(jnt_values=jnt_values)
+        arm.gen_meshmodel(alpha=1, toggle_tcp_frame=True).attach_to(base)
+    else:
+        print(1111)
+    arm.gen_meshmodel().attach_to(base)
+    # arm.show_cdprim()
+    base.run()
+    # generate random joint configurations and test FK/IK consistency
+    # for _ in range(10):
+    #     rand_conf = arm.rand_conf()
+    #     pos, rotmat = arm.fk(rand_conf, update=True)
+    #     jnt = arm.ik(pos, rotmat)
+    #     print(jnt)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6

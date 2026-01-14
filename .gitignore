@@ -1,44 +1,46 @@
+# Python
 /venv/
-/.idea/
 *.pyc
+__pycache__/
+
+# IDE
+/.idea/
 .vscode/settings.json
-wrs/robot_con/piper/policy/sem/ckpt/bert-base-uncased/
-wrs/robot_con/piper/policy/sem/ckpt/
-wrs/robot_con/piper/policy/sem/model/stack_blocks_three/model.safetensors
+
 # 模型权重文件 - 避免推送到Git
 *.pkl
 *.safetensors
 *.h5
 *.pt
 *.pth
-*.pkl
 *.onnx
+wrs/robot_con/piper/policy/sem/ckpt/bert-base-uncased/
+wrs/robot_con/piper/policy/sem/ckpt/
+wrs/robot_con/piper/policy/sem/model/stack_blocks_three/model.safetensors
 wrs/robot_sim/_data_files/
 wrs/robot_con/piper/policy/sem/model/
 wrs/robot_con/piper/policy/sem1/
 wrs/robot_con/piper/policy/test/
 wrs/robot_con/piper/lerobot_robot_piper/
+wrs/robot_con/piper/policy/sem/workspace/encoder.onnx
+
+# 配置文件
 *.json
 *.yaml
+
+# 图像文件
 *.jpg
 *.png
+
+# 压缩文件
 *.zip
-*.picklewrs/robot_con/piper/policy/sem/workspace/encoder.onnx
+
+# 3D模型文件
 *.stl
 *.dae
 *.STL*.stl
-*.pkl
-*.pt
-*.onnx
+
+# 二进制文件
 *.dll
 *.pdf
-*.stl
-*.dae
-*.pkl
-*.pt
-*.onnx
-*.dll
-*.pdf
-*.png
-*.onnx
-*.pkl
+*.pickle

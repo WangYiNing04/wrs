@@ -33,6 +33,7 @@ DEPTH_FPS = 30
 COLOR_FPS = 30
 
 
+<<<<<<< HEAD
 from collections import deque
 
 class ArucoPositionFilter:
@@ -148,6 +149,8 @@ def aruco_draw(img, corners, ids):
     cv2.aruco.drawDetectedMarkers(img, corners, ids)
     return img
 
+=======
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 def find_devices():
     '''
     Find the Realsense device connected to the computer
@@ -259,7 +262,11 @@ class _DataPipeline(mp.Process):
 
 
 class RealSenseD400(object):
+<<<<<<< HEAD
     def __init__(self, resolution: Literal['mid', 'high'] = 'high', device: str = None):
+=======
+    def __init__(self, resolution: Literal['mid', 'high'] = 'mid', device: str = None):
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         """
         :param toggle_new_process: Open a new process to stream data
         """
@@ -291,6 +298,7 @@ class RealSenseD400(object):
                                   [0, self._color_intr.fy, self._color_intr.ppy],
                                   [0, 0, 1]])
         self.intr_distcoeffs = np.asarray(self._color_intr.coeffs)
+<<<<<<< HEAD
         self._align = rs.align(rs.stream.color)
 
 
@@ -398,6 +406,8 @@ class RealSenseD400(object):
         inside = mask[py, px] == 1
         valid = inside & (verts[:, 2] > 0)
         return verts[valid]
+=======
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
     def req_data(self):
         """
@@ -493,6 +503,7 @@ class RealSenseD400(object):
         del self
 
 
+<<<<<<< HEAD
     def detect_aruco_positions(self,
                             aruco_dict_id=cv2.aruco.DICT_4X4_250,
                             allowed_ids=None,          # ⭐ 指定 ID
@@ -578,12 +589,15 @@ class RealSenseD400(object):
 
 
 
+=======
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 if __name__ == "__main__":
     import cv2
 
     # import huri.vision.yolov6.detect as yyd
     # from huri.core.common_import import fs
 
+<<<<<<< HEAD
     # serials, ctx = find_devices()
     # print(serials)
     # serials="243322074546"
@@ -651,3 +665,29 @@ if __name__ == "__main__":
 
 
 
+=======
+    serials, ctx = find_devices()
+    print(serials)
+    rs_pipelines = []
+    for ser in serials:
+        rs_pipelines.append(RealSenseD400(device=ser))
+        rs_pipelines[-1].reset()
+        time.sleep(5)
+        rs_pipelines[-1] = RealSenseD400(device=ser)
+        print("?")
+    while True:
+        for ind, pipeline in enumerate(rs_pipelines):
+            pcd, pcd_color, depth_img, color_img = pipeline.get_pcd_texture_depth()
+            cv2.imshow(f"color image {ind}", color_img)
+
+        k = cv2.waitKey(1)
+        if k == 27:
+            break
+    # print(color_img.shape)
+    # print(pcd.shape)
+    # yolo_img, yolo_results = yyd.detect(source=color_img,
+    #                                     weights="best.pt")
+    # print("test")
+    for pipeline in rs_pipelines:
+        pipeline.stop()
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6

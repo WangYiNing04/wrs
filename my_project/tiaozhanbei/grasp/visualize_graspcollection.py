@@ -1,7 +1,11 @@
 '''
 Author: wang yining
 Date: 2025-10-21 12:41:27
+<<<<<<< HEAD
 LastEditTime: 2025-10-31 12:05:41
+=======
+LastEditTime: 2025-10-21 16:02:32
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 FilePath: /wrs_tiaozhanbei/my_project/tiaozhanbei/grasp/visualize_graspcollection.py
 Description: 
 e-mail: wangyining0408@outlook.com
@@ -9,6 +13,7 @@ e-mail: wangyining0408@outlook.com
 from wrs import wd, rm, mgm, mcm, ppp, rrtc, gg, gpa
 import wrs.robot_sim.end_effectors.grippers.piper_gripper.piper_gripper as pg
 from wrs.grasping.grasp import *
+<<<<<<< HEAD
 import numpy as np 
 from collections import defaultdict
 
@@ -96,4 +101,15 @@ obj_cmodel = mcm.CollisionModel(r"/home/wyn/PycharmProjects/wrs_tiaozhanbei/0000
 obj_cmodel.pos=np.array([0,0,0])
 obj_cmodel.show_local_frame()
 obj_cmodel.attach_to(base)
+=======
+
+base = wd.World(cam_pos=[1.2, .7, 1], lookat_pos=[.0, 0, .15])
+grasp_collection = GraspCollection()
+grasp_collection = grasp_collection.load_from_disk(r'/home/wyn/PycharmProjects/wrs_tiaozhanbei/my_project/tiaozhanbei/grasp/manual_grasps.pickle')
+gripper = pg.PiperGripper()
+for grasp in grasp_collection:
+    gripper.grip_at_by_pose(grasp.ac_pos, grasp.ac_rotmat, grasp.ee_values)
+    gripper.gen_meshmodel(alpha=1).attach_to(base)
+
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 base.run()

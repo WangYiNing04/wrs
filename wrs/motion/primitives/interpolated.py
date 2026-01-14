@@ -107,7 +107,7 @@ class InterplatedMotion(object):
                 return None
             else:
                 self.robot.goto_given_conf(jnt_values=jnt_values, ee_values=ee_values)
-                result = self.robot.is_collided(obstacle_list=obstacle_list, toggle_contacts=False)
+                result, contacts = self.robot.is_collided(obstacle_list=obstacle_list, toggle_contacts=True)
                 if result:
                     if toggle_dbg:
                         for pnt in contacts:
@@ -142,7 +142,7 @@ class InterplatedMotion(object):
         jv_list = []
         for jnt_values in clipped_interplation:
             self.robot.goto_given_conf(jnt_values=jnt_values, ee_values=ee_values)
-            result = self.robot.is_collided(obstacle_list=obstacle_list, toggle_contacts=False)
+            result, contacts = self.robot.is_collided(obstacle_list=obstacle_list, toggle_contacts=True)
             if result:
                 print("Intermediated conf collided in gen_interpolated_motion!")
                 return None
@@ -328,7 +328,7 @@ class InterplatedMotion(object):
                 return None
             else:
                 self.robot.goto_given_conf(jnt_values, ee_values=ee_values)
-                result = self.robot.is_collided(obstacle_list, toggle_contacts=False)
+                result, contacts = self.robot.is_collided(obstacle_list, toggle_contacts=True)
                 if result:
                     if toggle_dbg:
                         for pnt in contacts:

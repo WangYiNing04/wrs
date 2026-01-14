@@ -109,10 +109,15 @@ python test_smooth_motion.py
 - 可以随时切换回原始控制方式（通过修改`move_mode`参数）
 
 
+<<<<<<< HEAD
 
 
 
 
 
+
+
+=======
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
 

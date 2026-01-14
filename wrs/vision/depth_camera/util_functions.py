@@ -2,8 +2,13 @@ import numpy as np
 import copy
 import open3d as o3d
 import sklearn.cluster as skc
+<<<<<<< HEAD
 #from wrs import vision as pda
 from wrs.vision.depth_camera import pcd_data_adapter as pda
+=======
+from wrs import vision as pda
+
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
 def __draw_registration_result(source_o3d, target_o3d, transformation):
     source_temp = copy.deepcopy(source_o3d)
@@ -54,7 +59,11 @@ def registration_ptpt(src, tgt, downsampling_voxelsize=.003, toggledebug = False
     #         o3d.pipelines.registration.CorrespondenceCheckerBasedOnEdgeLength(0.9),
     #         o3d.pipelines.registration.CorrespondenceCheckerBasedOnDistance(distance_threshold)],
     #     o3d.pipelines.registration.RANSACConvergenceCriteria(4000000, 500))
+<<<<<<< HEAD
     result_global = o3d.pipelines.registration.registration_fgr_based_on_feature_matching(
+=======
+    result_global = o3d.pipelines.registration.registration_fast_based_on_feature_matching(
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         source_down, target_down, source_fpfh, target_fpfh,
         o3d.pipelines.registration.FastGlobalRegistrationOption(
             maximum_correspondence_distance=distance_threshold))

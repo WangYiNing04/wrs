@@ -11,4 +11,8 @@ sudo udevadm trigger
 
 重新插拔
 
+<<<<<<< HEAD
 ifconfig or ip link show        
+=======
+ifconfig or ip link show        
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6

@@ -1,7 +1,11 @@
 '''
 Author: wang yining
 Date: 2025-10-21 16:35:06
+<<<<<<< HEAD
 LastEditTime: 2025-10-22 21:54:43
+=======
+LastEditTime: 2025-10-21 16:44:02
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 FilePath: /wrs_tiaozhanbei/my_project/tiaozhanbei/stack_blocks_three/deploy.py
 Description: 三个方块堆叠任务
 e-mail: wangyining0408@outlook.com
@@ -51,6 +55,7 @@ class PointCloudProcessor:
         self.initialize_cameras()
     
     def align_pcd(self, pcd):
+<<<<<<< HEAD
         if pcd is None:
                 print("[align_pcd] 输入 pcd 为 None")
                 return np.empty((0, 3), dtype=float)
@@ -80,6 +85,11 @@ class PointCloudProcessor:
         pcd_world = (R @ valid_pts.T).T + t
 
         return pcd_world
+=======
+        """将点云从相机坐标系转换到世界坐标系"""
+        c2w_mat = self._init_calib_mat  # 相机到世界的变换矩阵
+        return rm.transform_points_by_homomat(c2w_mat, points=pcd)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     
     def initialize_cameras(self):
         """初始化相机"""
@@ -143,6 +153,7 @@ class BlockDetector:
     
     def detect_blocks(self):
         """
+<<<<<<< HEAD
             输入:
                 pcd: Nx3 numpy array 点云坐标
                 pcd_color: Nx3 numpy array 颜色 (RGB, 0~1)
@@ -263,6 +274,71 @@ class BlockDetector:
             print(f"[INFO] Detected {name}: center={center}, pts={len(pts)}")
 
         return blocks
+=======
+        检测三个方块的位置
+        
+        Returns:
+            dict: 包含红、绿、蓝方块位置的字典
+        """
+        print("开始检测方块位置...")
+        
+        # 获取相机数据
+        pcd, pcd_color, depth_img, color_img = self.processor.get_camera_data('middle')
+        
+        if pcd is None:
+            print("无法获取相机数据")
+            return None
+        
+        # 使用YOLO检测
+        results = self.yolo_model(color_img)
+        
+        # 处理检测结果
+        blocks_positions = {}
+        
+        if results and len(results) > 0:
+            result = results[0]
+            
+            # 获取检测框和类别
+            if hasattr(result, 'boxes') and result.boxes is not None:
+                boxes = result.boxes
+                confidences = boxes.conf.cpu().numpy()
+                classes = boxes.cls.cpu().numpy()
+                xyxy = boxes.xyxy.cpu().numpy()
+                
+                # 颜色映射
+                color_mapping = {
+                    0: 'red',    # 假设类别0是红色
+                    1: 'green',  # 假设类别1是绿色  
+                    2: 'blue'    # 假设类别2是蓝色
+                }
+                
+                for i, (conf, cls, box) in enumerate(zip(confidences, classes, xyxy)):
+                    if conf > 0.5:  # 置信度阈值
+                        color_name = color_mapping.get(int(cls), f'unknown_{int(cls)}')
+                        
+                        # 计算方块中心点
+                        x1, y1, x2, y2 = box
+                        center_x = int((x1 + x2) / 2)
+                        center_y = int((y1 + y2) / 2)
+                        
+                        # 获取3D坐标
+                        if center_y < depth_img.shape[0] and center_x < depth_img.shape[1]:
+                            depth = depth_img[center_y, center_x]
+                            if depth > 0:
+                                # 转换到世界坐标系
+                                point_3d = pcd[center_y, center_x]
+                                world_point = self.processor.align_pcd(point_3d)
+                                
+                                blocks_positions[color_name] = {
+                                    'position': world_point,
+                                    'confidence': conf,
+                                    'bbox': box
+                                }
+                                
+                                print(f"检测到{color_name}方块: 位置={world_point}, 置信度={conf:.2f}")
+        
+        return blocks_positions
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
 class BlockStackingTask:
     """方块堆叠任务执行器"""
@@ -270,8 +346,13 @@ class BlockStackingTask:
     def __init__(self):
         """初始化任务执行器"""
         # 初始化机械臂控制器
+<<<<<<< HEAD
         self.left_arm_con = PiperArmController(can_name='can0', has_gripper=True)
         self.right_arm_con = PiperArmController(can_name='can1', has_gripper=True)
+=======
+        self.left_arm_con = PiperArmController(can_name='0', has_gripper=True)
+        self.right_arm_con = PiperArmController(can_name='1', has_gripper=True)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         
         # 初始化检测器
         self.detector = BlockDetector()
@@ -282,8 +363,13 @@ class BlockStackingTask:
         # 目标位置（中间位置）
         self.target_positions = {
             'red': [0.0, 0.0, 0.05],      # 红色方块放在中间
+<<<<<<< HEAD
             'green': [0.0, 0.0, 0.10],    # 绿色方块放在红色方块上面
             'blue': [0.0, 0.0, 0.15]      # 蓝色方块放在绿色方块上面
+=======
+            'green': [0.0, 0.0, 0.08],    # 绿色方块放在红色方块上面
+            'blue': [0.0, 0.0, 0.11]      # 蓝色方块放在绿色方块上面
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         }
         
         # 抓取姿态文件路径
@@ -326,17 +412,28 @@ class BlockStackingTask:
         
         return grasp_collection
     
+<<<<<<< HEAD
     def execute_pick_place(self, block_pos, target_pos, block_rot, target_rot, arm_controller, robot):
         """执行单个方块的抓取和放置"""
         print(f"执行抓取和放置: 从 {block_pos} 到 {target_pos}")
         
         target_rot = rm.rotmat_from_euler(0, 0, 0)
+=======
+    def execute_pick_place(self, block_pos, target_pos, arm_controller, robot):
+        """执行单个方块的抓取和放置"""
+        print(f"执行抓取和放置: 从 {block_pos} 到 {target_pos}")
+        
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         # 创建3D环境
         base = wd.World(cam_pos=[1.2, .7, 1], lookat_pos=[.0, 0, .15])
         mgm.gen_frame().attach_to(base)
         
         # 设置旋转矩阵
+<<<<<<< HEAD
         start_rot = block_rot
+=======
+        start_rot = rm.rotmat_from_euler(0, 0, 0)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         goal_rot = rm.rotmat_from_euler(0, 0, 0)
         
         # 创建起始位置的方块
@@ -466,9 +563,14 @@ class BlockStackingTask:
         print("开始执行三个方块堆叠任务...")
         
         # 1. 检测方块位置
+<<<<<<< HEAD
 
         blocks = self.detector.detect_blocks()
         if not blocks:
+=======
+        blocks_positions = self.detector.detect_blocks()
+        if not blocks_positions:
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
             print("未检测到方块，任务终止")
             return False
         
@@ -480,22 +582,36 @@ class BlockStackingTask:
         task_order = ['red', 'green', 'blue']
         
         for i, color in enumerate(task_order):
+<<<<<<< HEAD
             if color not in blocks:
+=======
+            if color not in blocks_positions:
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
                 print(f"未检测到{color}方块，跳过")
                 continue
             
             print(f"\n=== 执行第{i+1}步：抓取{color}方块 ===")
             
             # 获取方块位置
+<<<<<<< HEAD
             block_pos = blocks[color]['pos']
             block_rot = blocks[color]['rot']
             target_pos = self.target_positions[color]
             target_rot = (0,0,0)
+=======
+            block_pos = blocks_positions[color]['position']
+            target_pos = self.target_positions[color]
+            
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
             # 选择机械臂
             arm_controller, robot = self.choose_arm(block_pos)
             
             # 执行抓取和放置
+<<<<<<< HEAD
             success = self.execute_pick_place(block_pos, target_pos, block_rot, target_rot, arm_controller, robot)
+=======
+            success = self.execute_pick_place(block_pos, target_pos, arm_controller, robot)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
             
             if success:
                 print(f"{color}方块放置成功！")

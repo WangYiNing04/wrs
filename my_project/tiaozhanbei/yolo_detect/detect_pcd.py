@@ -17,7 +17,11 @@ from mpl_toolkits.mplot3d import Axes3D
 class RealTimeYOLODetector:
     """实时YOLO检测器，支持多相机同时预览和YOLO实时推理"""
     
+<<<<<<< HEAD
     def __init__(self, config_path=r'/home/wyn/PycharmProjects/wrs_tiaozhanbei/my_project/tiaozhanbei/yolo_detect/config/camera_correspondence.yaml', 
+=======
+    def __init__(self, config_path=r'F:\wrs_tiaozhanbei\my_project\tiaozhanbei\yolo_detect\config\camera_correspondence.yaml', 
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
                  yolo_model_path='yolov8n.pt',check_3D_keypoints=False, save_pointcloud=False, visualize_3d=False):
         """
         初始化实时检测器
@@ -487,7 +491,11 @@ def main():
     try:
         # 创建检测器
         detector = RealTimeYOLODetector(
+<<<<<<< HEAD
             yolo_model_path=r'/home/wyn/PycharmProjects/wrs_tiaozhanbei/my_project/tiaozhanbei/empty_cup_place/best.pt',  # 可以替换为您自己的模型路径
+=======
+            yolo_model_path=r'F:\wrs_tiaozhanbei\my_project\tiaozhanbei\yolo_detect\model\empty_cup_place\best.pt',  # 可以替换为您自己的模型路径
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
             check_3D_keypoints=False,
             save_pointcloud=False,  # 启用点云保存功能
             visualize_3d=False  # 启用3D可视化功能

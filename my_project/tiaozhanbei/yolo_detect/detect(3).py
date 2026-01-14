@@ -7,7 +7,11 @@ import numpy as np
 import cv2
 from ultralytics import YOLO
 import wrs.modeling.geometric_model as gm
+<<<<<<< HEAD
 import wrs.basis.robot_math as rm
+=======
+
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
 # ==============================================================================
 # 本地实现的矩阵变换函数
@@ -37,10 +41,17 @@ def transform_points_by_homomat(homomat: np.ndarray, points: np.ndarray):
 
 # ------------------ 1️⃣ 相机到世界（左臂基座）的变换矩阵 (C2W) ------------------
 camera_to_world_mat = np.array([
+<<<<<<< HEAD
         [0.009037022325476372, -0.6821888672799827, 0.7311201572213072, -0.00295266], 
         [-0.9999384009275621, -0.010877202709892496, 0.0022105256641201097, -0.28066693000000004], 
         [0.006444543204378151, -0.7310950959833536, -0.6822451433307909, 0.51193761], 
         [0.0, 0.0, 0.0, 1.0]
+=======
+    [0.009037022325476372, -0.6821888672799827, 0.7311201572213072, -0.008952660000000005],
+    [-0.9999384009275621, -0.010877202709892496, 0.0022105256641201097, -0.27816693000000003],
+    [0.006444543204378151, -0.7310950959833536, -0.6822451433307909, 0.5174376099999994],
+    [0.0, 0.0, 0.0, 1.0]
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 ])
 
 
@@ -154,12 +165,17 @@ def detect_keypoints_in_leftarm_frame(yolo_model, color_img, pcd_raw, camera_to_
     检测关键点并返回其在左臂基座坐标系下的三维坐标
     """
 
+<<<<<<< HEAD
     pcd_raw = transform_point_cloud_fixed_camera(camera_to_world_mat, pcd_raw)
+=======
+    pcd_left = transform_point_cloud_fixed_camera(camera_to_world_mat, pcd_raw)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
     # 2. YOLO检测像素点 (此调用会进行实时画面更新)
     pixels_coord = yolo_detect_injection_pix(yolo_model, color_img, toggle_image=True)
     if pixels_coord is None:
         return None
+<<<<<<< HEAD
     print(pixels_coord)
     pcd_matrix = pcd_raw.reshape(color_img.shape[0], color_img.shape[1], 3)
     py = pixels_coord[0][1]
@@ -167,6 +183,10 @@ def detect_keypoints_in_leftarm_frame(yolo_model, color_img, pcd_raw, camera_to_
     point_3d = pcd_matrix[py, px] 
     print("point_3d:")
     print(point_3d)
+=======
+
+    pcd_matrix = pcd_left.reshape(color_img.shape[0], color_img.shape[1], 3)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     detected_points_xyz = []
     for p in pixels_coord:
         est = _estimate_point_from_neighborhood(p, pcd_matrix, neighborhood_size)
@@ -180,12 +200,17 @@ def detect_keypoints_in_leftarm_frame(yolo_model, color_img, pcd_raw, camera_to_
     detected_points_xyz = np.asarray(detected_points_xyz)
     # print("\n✅ 检测到的关键点在左臂基座坐标系下：") # 避免在实时循环中过多打印
     # print(detected_points_xyz)
+<<<<<<< HEAD
     
     return detected_points_xyz
 
 def align_pcd(pcd,camera_to_world_mat):
     c2w_mat = camera_to_world_mat  # 相机到世界的变换矩阵
     return rm.transform_points_by_homomat(c2w_mat, points=pcd)
+=======
+    return detected_points_xyz
+
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
 # ------------------ 6️⃣ 示例运行 ------------------
 if __name__ == "__main__":
@@ -197,7 +222,11 @@ if __name__ == "__main__":
         base = None 
 
     # 初始化
+<<<<<<< HEAD
     yolo_model = YOLO("/home/wyn/PycharmProjects/wrs_tiaozhanbei/my_project/tiaozhanbei/empty_cup_place/best.pt")
+=======
+    yolo_model = YOLO("./model/empty_cup_place/best.pt")
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     rs_cam = RealSenseD400(device='243322073422')  # 中间相机
 
     # --- 画面过暗修复：手动设置曝光和增益 ---
@@ -227,12 +256,16 @@ if __name__ == "__main__":
             
             # 2. 运行检测和实时显示
             detected_points_xyz = detect_keypoints_in_leftarm_frame(yolo_model, color_img, pcd_raw, camera_to_world_mat)
+<<<<<<< HEAD
 
             #pcd_world = transform_point_cloud_fixed_camera(camera_to_world_mat, detected_points_xyz)
             if detected_points_xyz is not None:
                 print(detected_points_xyz)
                 pcd_world = align_pcd(detected_points_xyz,camera_to_world_mat)
                 print(pcd_world)
+=======
+            
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
             # 3. 打印世界坐标系下的检测点坐标
             if detected_points_xyz is not None:
                 # 打印坐标

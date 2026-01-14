@@ -13,9 +13,12 @@ from typing import Optional, List, Tuple
 import wrs.basis.robot_math as rm
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+<<<<<<< HEAD
 import wrs.basis.robot_math as rm
 import wrs.modeling.geometric_model as mgm
 from wrs import wd, rm, mgm, mcm, ppp, gg, gpa
+=======
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
 def cam_to_world(cam_point, T_cam_world):
     cam_point_h = np.append(cam_point, 1)
@@ -37,7 +40,11 @@ def pixel_to_3d(u, v, depth_image, K):
 class RealTimeYOLODetector:
     """实时YOLO检测器，支持多相机同时预览和YOLO实时推理"""
     
+<<<<<<< HEAD
     def __init__(self, config_path=r'/home/wyn/Documents/xwechat_files/wxid_uklfyt3st8sl12_39e9/msg/file/2025-12/best(1).pt', 
+=======
+    def __init__(self, config_path=r'F:\wrs_tiaozhanbei\my_project\tiaozhanbei\yolo_detect\config\camera_correspondence.yaml', 
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
                  yolo_model_path='yolov8n.pt',check_3D_keypoints=False, save_pointcloud=False, visualize_3d=False):
         """
         初始化实时检测器
@@ -123,7 +130,11 @@ class RealTimeYOLODetector:
             return None, None
             
         # 运行推理，设置置信度阈值为0.9
+<<<<<<< HEAD
         results = self.yolo_model(image, conf=0.3)
+=======
+        results = self.yolo_model(image, conf=0.9)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
     
         # 渲染结果
@@ -134,6 +145,7 @@ class RealTimeYOLODetector:
         
         return annotated_image, results
 
+<<<<<<< HEAD
     def show_point_cloud(self, pcd, pcd_color,model_path = r"/home/wyn/PycharmProjects/wrs_tiaozhanbei/0000_examples/objects/tiaozhanbei/cup.stl,pos"):
         base = wd.World(cam_pos=[.5, .5, .5], lookat_pos=[0, 0, 0])
         mgm.gen_frame().attach_to(base)
@@ -143,6 +155,8 @@ class RealTimeYOLODetector:
         bj.pos = pos
         bj.attach_to(base)
         base.run()
+=======
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
     def start_detection_mode(self):
         """
@@ -157,7 +171,11 @@ class RealTimeYOLODetector:
         self.detection_active = True
         
         try:
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
             # 实时显示画面
             while self.detection_active:
                 display_images = {}
@@ -165,6 +183,7 @@ class RealTimeYOLODetector:
                 for role, pipeline in self.rs_pipelines.items():
                     try:
                         pcd, pcd_color, depth_img, color_img = pipeline.get_pcd_texture_depth()
+<<<<<<< HEAD
                         #self.show_point_cloud(pcd,pcd_color)
                         # 使用YOLO进行推理
                         annotated_img, results = self.run_yolo_inference(color_img)
@@ -227,6 +246,68 @@ class RealTimeYOLODetector:
                         #                     camera_role=role
                         #                 )
                         #                 self.last_visualization_time = current_time
+=======
+                        # 使用YOLO进行推理
+                        annotated_img, results = self.run_yolo_inference(color_img)
+                        
+                        #world2cam
+                        pcd = self.align_pcd(pcd)
+                        
+                        # 裁剪世界坐标系下的点云到指定范围
+                        cropped_pcd, original_count, cropped_count = self.crop_pointcloud_world(
+                            pcd, 
+                            x_range=(0, 0.6), 
+                            y_range=(0, -0.6), 
+                            z_range=(0.07, 0.08)
+                        )
+                        
+                        # 打印裁剪后的点云（按高度排序）并计算中心点
+                        if cropped_pcd is not None and len(cropped_pcd) > 0:
+                            self.print_cropped_pointcloud_with_center(cropped_pcd, role)
+                            
+                            # 可视化裁剪后的点云（控制频率，避免过于频繁）
+                            current_time = time.time()
+                            if current_time - self.last_visualization_time > 3.0:  # 每3秒最多可视化一次
+                                self.visualize_pointcloud_3d(
+                                    cropped_pcd, 
+                                    title=f"裁剪后点云 - {role}相机",
+                                    height_min=0.07,
+                                    height_max=0.08,
+                                    camera_role=role
+                                )
+                                self.last_visualization_time = current_time
+                        
+                        # 提取YOLO检测框中的点云并转换到世界坐标系，同时进行高度筛选
+                        if results[0].boxes is not None and len(results[0].boxes) > 0:
+                            bbox_pcd_world, bbox_original_count, bbox_filtered_count = self.extract_bbox_pointcloud(
+                                results[0].boxes, 
+                                cropped_pcd if cropped_pcd is not None else pcd,  # 使用裁剪后的点云
+                                color_img.shape,
+                                height_min=0.074,  # 7.4cm
+                                height_max=0.076   # 7.6cm
+                            )
+                            if bbox_pcd_world is not None and len(bbox_pcd_world) > 0:
+                                print(f"YOLO检测框高度筛选结果: 原始点云 {bbox_original_count} 个, 筛选后 {bbox_filtered_count} 个")
+                                # 可以在这里添加点云处理逻辑
+                                # 例如：保存点云、发送到机器人等
+                                
+                                # 可选：保存点云到文件
+                                if hasattr(self, 'save_pointcloud') and self.save_pointcloud:
+                                    self.save_bbox_pointcloud(bbox_pcd_world, role)
+                                
+                                # 可选：3D可视化（控制频率，避免过于频繁）
+                                if hasattr(self, 'visualize_3d') and self.visualize_3d:
+                                    current_time = time.time()
+                                    if current_time - self.last_visualization_time > 2.0:  # 每2秒最多可视化一次
+                                        self.visualize_pointcloud_3d(
+                                            bbox_pcd_world, 
+                                            title=f"YOLO检测结果 - {role}相机",
+                                            height_min=0.074,
+                                            height_max=0.076,
+                                            camera_role=role
+                                        )
+                                        self.last_visualization_time = current_time
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
                        
 
@@ -827,7 +908,11 @@ def main():
     try:
         # 创建检测器
         detector = RealTimeYOLODetector(
+<<<<<<< HEAD
             yolo_model_path=r'/home/wyn/PycharmProjects/wrs_tiaozhanbei/my_project/tiaozhanbei/put_bottles_dustbin/best.pt', 
+=======
+            yolo_model_path=r'F:\wrs_tiaozhanbei\my_project\tiaozhanbei\yolo_detect\model\empty_cup_place\best.pt',  # 可以替换为您自己的模型路径
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
             check_3D_keypoints=False,
             save_pointcloud=False,  # 启用点云保存功能
             visualize_3d=False  # 启用3D可视化功能

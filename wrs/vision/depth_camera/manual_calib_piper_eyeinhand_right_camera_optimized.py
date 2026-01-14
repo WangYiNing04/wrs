@@ -248,9 +248,15 @@ class OptimizedManualCalibrationBase(ABC):
         self.async_capture.start()
 
         # add task with reduced frequency
+<<<<<<< HEAD
         taskMgr.doMethodLater(5, self.sync_rbt, "sync rbt", )
         taskMgr.add(self.adjust, "manual adjust the mph")
         taskMgr.doMethodLater(5, self.sync_pcd, "sync mph", )
+=======
+        taskMgr.doMethodLater(2, self.sync_rbt, "sync rbt", )
+        taskMgr.add(self.adjust, "manual adjust the mph")
+        taskMgr.doMethodLater(1.0/visualization_fps, self.sync_pcd, "sync mph", )
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
     @abstractmethod
     def get_pcd(self) -> np.ndarray:
@@ -536,13 +542,21 @@ if __name__ == "__main__":
     base = wd.World(cam_pos=[0, 2, 0], lookat_pos=[0, 0, 0], lens_type=2)
     
     #加载左臂
+<<<<<<< HEAD
     #rbtx_left = PiperArmController(can_name="can0", has_gripper=True)
+=======
+    rbtx_left = PiperArmController(can_name="can0", has_gripper=True)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     
     #加载右臂
     rbtx_right = PiperArmController(can_name="can1", has_gripper=True)
 
     #左臂base与世界坐标系重合
+<<<<<<< HEAD
     #rbt_left = Piper(enable_cc=True, rotmat=rm.rotmat_from_euler(0, 0, 0),pos=[0, 0.6, 0], name='piper_left')
+=======
+    rbt_left = Piper(enable_cc=True, rotmat=rm.rotmat_from_euler(0, 0, 0), name='piper_left')
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     
     #右臂在world Y轴 -0.6m处
     rbt_right = Piper(enable_cc=True, rotmat=rm.rotmat_from_euler(0, 0, 0),pos=[0, -0.6, 0], name='piper_right')
@@ -575,6 +589,7 @@ if __name__ == "__main__":
         visualization_fps=10    # 10 FPS visualization
     )
     
+<<<<<<< HEAD
     # # 同步左臂的任务
     # left_arm = None
 
@@ -588,6 +603,21 @@ if __name__ == "__main__":
     #     return task.again
 
     # taskMgr.doMethodLater(1, sync_left_arm, "sync left arm")
+=======
+    # 同步左臂的任务
+    left_arm = None
+
+    def sync_left_arm(task):
+        global left_arm
+        if left_arm is not None:
+            left_arm.detach()
+        rbt_jnt_val = rbtx_left.get_joint_values()
+        rbt_left.fk(rbt_jnt_val, update=True)
+        left_arm = rbt_left.gen_meshmodel(alpha=1).attach_to(base)
+        return task.again
+
+    taskMgr.doMethodLater(0.01, sync_left_arm, "sync left arm")
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
     try:
         base.run()

@@ -252,14 +252,15 @@ if __name__ == '__main__':
 
 
 
-    tgt_pos = np.array([0, 0, 0.5])
-    mgm.gen_sphere(radius=0.02, pos=tgt_pos, rgb=[1, 0, 0]).attach_to(base)
-    tgt_rotmat = rm.rotmat_from_euler(0.0, 0.0, 0.0)
+    # tgt_pos = np.array([0, 0, 0.5])
+    # mgm.gen_sphere(radius=0.02, pos=tgt_pos, rgb=[1, 0, 0]).attach_to(base)
+    # tgt_rotmat = rm.rotmat_from_euler(0.0, 0.0, 0.0)
 
-    joint_value = arm.ik(tgt_pos=tgt_pos,tgt_rotmat=tgt_rotmat)
+    # joint_value = arm.ik(tgt_pos=tgt_pos,tgt_rotmat=tgt_rotmat)
 
-    print(tgt_pos)
-    print(tgt_rotmat)
+    # print(tgt_pos)
+    # print(tgt_rotmat)
+    joint_value = np.array([0,0,0,0,0,0,0])
     # joint_value1 = np.array([-1.396263, -1.745329, -1.570796, 0, -1.570796,
     #                               -0.785398, -1.570796])
     

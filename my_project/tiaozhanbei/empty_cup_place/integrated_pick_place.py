@@ -71,8 +71,13 @@ def create_grasp_collection(obj_path, save_path, gripper=None, base=None):
         angle_between_contact_normals=rm.radians(175),
         rotation_interval=rm.radians(15),
         max_samples=100,
+<<<<<<< HEAD
         min_dist_between_sampled_contact_points=.01,
         contact_offset=.02,
+=======
+        min_dist_between_sampled_contact_points=.1,
+        contact_offset=.01,
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         toggle_dbg=False
     )
     
@@ -153,7 +158,11 @@ def run_pick_place_task(robot,obj_path, grasp_collection_path, start_pos, goal_p
     h2_copy.show_cdprim()
     
     # 创建机器人
+<<<<<<< HEAD
     # robot.gen_meshmodel().attach_to(base)
+=======
+    robot.gen_meshmodel().attach_to(base)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     
     # 实例化规划器
     rrtc_planner = rrtc.RRTConnect(robot)
@@ -174,7 +183,11 @@ def run_pick_place_task(robot,obj_path, grasp_collection_path, start_pos, goal_p
         end_jnt_values=start_conf,
         grasp_collection=grasp_collection,
         goal_pose_list=goal_pose_list,
+<<<<<<< HEAD
         pick_approach_direction = -rm.const.z_ax,
+=======
+        pick_approach_direction = rm.const.z_ax,
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
         place_approach_distance_list=[.05] * len(goal_pose_list),
         place_depart_distance_list=[.05] * len(goal_pose_list),
         pick_approach_distance=.05,
@@ -260,6 +273,7 @@ def export_joint_trajectory(mot_data, save_dir=None, filename=None):
     print(f"关节角+夹爪轨迹已保存: {saved_path} (共 {len(trajectory)} 个点)")
     return trajectory, saved_path
 
+<<<<<<< HEAD
 def process_gripper_data(data, threshold=0.05):
     """
     处理夹爪数据，将大的数改为1，小的数改为0，并返回变化点索引
@@ -314,10 +328,14 @@ def split_trajectory_by_gripper(jv, change_indices, threshold=0.05):
     return stage1,stage2,stage3
     
 def excute_motion(arm: PiperArmController, mot_data):
+=======
+def excute_motion(arm: PiperArmController, json_path: str):
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     """
     从JSON文件读取关节角轨迹并逐点执行 move_j。
     要求每个轨迹点为6个关节角。
     """
+<<<<<<< HEAD
     jv = mot_data.jv_list
     ev = mot_data.ev_list
     # print(jv)
@@ -328,6 +346,20 @@ def excute_motion(arm: PiperArmController, mot_data):
     #print(change_indices)
     #approach_path,pick_path,depart_path = split_trajectory_by_gripper(jv,change_indices)
 
+=======
+    if not os.path.isfile(json_path):
+        raise FileNotFoundError(f"未找到轨迹文件: {json_path}")
+
+    with open(json_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    if not isinstance(data, dict) or 'joint_trajectory' not in data:
+        raise ValueError("轨迹文件格式不正确，缺少 'joint_trajectory' 字段")
+
+    trajectory = data['joint_trajectory']
+
+    print(trajectory)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     # # 规整为6关节角的列表
     # trajectory: list[list[float]] = []
     # for idx, point in enumerate(trajectory_raw):
@@ -338,6 +370,7 @@ def excute_motion(arm: PiperArmController, mot_data):
     #     jv6 = [float(point[i]) for i in range(6)]
     #     trajectory.append(jv6)
 
+<<<<<<< HEAD
     #先要保证到达pick起始位置
     start_j = jv[0]
     start_e = ev[0]
@@ -382,6 +415,22 @@ def excute_motion(arm: PiperArmController, mot_data):
     #         gripper_width = 0.0
     #     print(gripper_width)
     #     arm.gripper_control(angle=gripper_width,effort=0)
+=======
+    print(f"读取到 {len(trajectory)} 个关节轨迹点，将依次执行 move_j（6轴）...")
+
+    for i, jv in enumerate(trajectory):
+        print(f"执行第 {i+1}/{len(trajectory)} 个点: {jv}")
+        arm.move_j(jv[:6],speed=10)
+
+        time.sleep(0.2)
+
+        if jv[6] >= 0.08:
+            gripper_width = 0.04
+        else:
+            gripper_width = 0.0
+        print(gripper_width)
+        arm.gripper_control(angle=gripper_width,effort=0)
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
 
 def main():
@@ -390,11 +439,19 @@ def main():
     """
     visualize = True
     #初始化
+<<<<<<< HEAD
     left_arm_con = PiperArmController(can_name='can0', has_gripper=True)
     right_arm_con = PiperArmController(can_name='can1', has_gripper=True)
     # 文件路径配置
     obj_path = r"/home/wyn/PycharmProjects/wrs_tiaozhanbei/0000_examples/objects/tiaozhanbei/cup.stl"
     grasp_save_path = r"/home/wyn/PycharmProjects/wrs_tiaozhanbei/my_project/tiaozhanbei/empty_cup_place/cup_grasps56.pickle"
+=======
+    left_arm_con = PiperArmController(can_name='0', has_gripper=True)
+    right_arm_con = PiperArmController(can_name='1', has_gripper=True)
+    # 文件路径配置
+    obj_path = r"/home/wyn/PycharmProjects/wrs_tiaozhanbei/0000_examples/objects/tiaozhanbei/cup.stl"
+    grasp_save_path = r"/home/wyn/PycharmProjects/wrs_tiaozhanbei/my_project/tiaozhanbei/empty_cup_place/piper_gripper_grasps.pickle"
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     #yolo_model = YOLO("./model/empty_cup_place/best.pt")
     gripper = pg.PiperGripper()
     arm = left_arm_con  # 或根据其他逻辑初始化
@@ -411,12 +468,18 @@ def main():
     cup_z = 0
     print(cup_x,cup_y,cup_z)
     #cup_x,cup_y,cup_z = 0.3397, -0.2887, 0
+<<<<<<< HEAD
  
     #coaster_x,coaster_y,coaster_z = 0.208, -0.4599417, 0
 
     coaster_z = 0.01
     print("[INFO] DETECT")
     print(cup_x,cup_y,cup_z,coaster_x,coaster_y,coaster_z)
+=======
+
+    
+
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
     #得到杯子位置后判断使用哪只手抓取
     if cup_y > -0.3:
         arm = left_arm_con
@@ -438,11 +501,19 @@ def main():
     
 
     #考虑使用固定的抓取姿势
+<<<<<<< HEAD
     # print("正在生成新的抓取姿态（覆盖已有文件）...")
     # grasp_collection = create_grasp_collection(obj_path, grasp_save_path, base=base, gripper=gripper)
 
     grasp_collection = gg.GraspCollection.load_from_disk(
     file_name=r'/home/wyn/PycharmProjects/wrs_tiaozhanbei/my_project/tiaozhanbei/empty_cup_place/cup_grasps56.pickle')
+=======
+    print("正在生成新的抓取姿态（覆盖已有文件）...")
+    grasp_collection = create_grasp_collection(obj_path, grasp_save_path, base=base, gripper=gripper)
+
+    # grasp_collection = gg.GraspCollection.load_from_disk(
+    # file_name=r'/home/wyn/PycharmProjects/wrs_tiaozhanbei/my_project/tiaozhanbei/task_sim/piper_gripper_grasps.pickle')
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
    
     box1 = mcm.gen_box(xyz_lengths=[0.8, 1.4, 1], pos=np.array([0.34, -0.2985, -0.5]))
     box1.attach_to(base)
@@ -456,6 +527,7 @@ def main():
     # ]
     
     obstacle_list = [box1, box2]
+<<<<<<< HEAD
 
     try:
         try:
@@ -528,6 +600,68 @@ def main():
         print("正在将机械臂移动到初始位置...")
         arm.move_j([0, 0, 0, 0, 0, 0], speed=20)
         print("程序已退出")
+=======
+    try:
+        # 执行Pick-and-Place任务
+        result = run_pick_place_task(
+            robot,
+            obj_path=obj_path,
+            grasp_collection_path=grasp_save_path,
+            start_pos=start_pos,
+            goal_pos=goal_pos,
+            start_rot=start_rot,
+            goal_rot=goal_rot,
+            obstacle_list=obstacle_list,
+            base=base
+        )
+        
+        if result is not None:
+            mot_data = result
+            # 导出关节角轨迹供真实机械臂使用
+            trajectory, traj_path = export_joint_trajectory(mot_data)
+            #得到杯子位置后判断使用哪只手抓取
+            if cup_y > -0.3:
+                arm = left_arm_con
+            else:
+                arm = right_arm_con
+                
+            traj_path = r"/home/wyn/PycharmProjects/wrs_tiaozhanbei/my_project/tiaozhanbei/empty_cup_place/exported/joint_trajectory_with_gripper_empty_cup_place.json"
+
+            #move_jspace_path ?
+
+            #先开夹爪
+            arm.gripper_control(angle=0.04,effort=0)
+            excute_motion(arm,traj_path)
+
+            #可视化结果
+            # 示例：打印前3个关节角
+            for idx, jv in enumerate(trajectory[:3]):
+                print(f"轨迹点 {idx+1}: {jv}")
+            print("开始动画演示...")
+            print("按空格键逐步播放动画")
+            animate_motion(mot_data, base)
+            base.run()
+        else:
+            print("任务执行失败！")
+            print("启动基础3D环境...")
+
+            arm.move_j([0, 0, 0, 0, 0, 0], speed=20)
+            for grasp in grasp_collection:
+                gripper.grip_at_by_pose(grasp.ac_pos, grasp.ac_rotmat, grasp.ee_values)
+                gripper.gen_meshmodel(alpha=1).attach_to(base)
+
+            base.run()
+
+    except Exception as e:
+        print(f"执行过程中出现错误: {e}")
+        print("启动基础3D环境...")
+
+        arm.move_j([0, 0, 0, 0, 0, 0], speed=20)
+        base.run()
+
+
+  
+>>>>>>> d50fd70c0bbccf881563dcbd0209244c094ad7e6
 
 if __name__ == '__main__':
     main()

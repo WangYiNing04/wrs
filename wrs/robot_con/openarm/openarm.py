@@ -1,7 +1,7 @@
 '''
 Author: wang yining
 Date: 2025-12-31 00:43:04
-LastEditTime: 2026-01-04 15:56:13
+LastEditTime: 2026-01-10 14:44:52
 FilePath: /wrs_tiaozhanbei/wrs/robot_con/openarm/openarm.py
 Description: 
 e-mail: wangyining0408@outlook.com
@@ -736,8 +736,8 @@ if __name__ == "__main__":
         #joints_values = [0,0,0,0,0,0,0] #初位
         #arm.move_j(joint_angles=joints_values,speed=0.1,block=True,debug=False)        
 
-        joints_values = [-0.13561456,  0.50946059, -1.53067063,  2.45727474, -1.57263294,  0.1489662 ,-1.45437552]
-        arm.move_j(joint_angles=joints_values,speed=0.1,block=True,debug=False)  
+        # joints_values = [-0.13561456,  0.50946059, -1.53067063,  2.45727474, -1.57263294,  0.1489662 ,-1.45437552]
+        # arm.move_j(joint_angles=joints_values,speed=0.1,block=True,debug=False)  
         
         #测试move_jntspace_path
         # current_joints = arm.get_joint_values()
@@ -774,9 +774,9 @@ if __name__ == "__main__":
         # target_rot = rot  # 保持当前姿态不变
         # arm.move_p(pos=target_pos, rotmat=target_rot, block=True, speed=0.1)
                                      
-        #arm.disable()
-        while True:
-            time.sleep(1)
+        arm.disable()
+        # while True:
+        #     time.sleep(1)
 
     except KeyboardInterrupt:
         arm.disable()

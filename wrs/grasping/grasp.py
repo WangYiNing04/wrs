@@ -1,11 +1,3 @@
-'''
-Author: wang yining
-Date: 2025-10-05 18:02:37
-LastEditTime: 2025-10-20 23:33:07
-FilePath: /wrs_tiaozhanbei/wrs/grasping/grasp.py
-Description: 
-e-mail: wangyining0408@outlook.com
-'''
 import pickle, uuid
 
 
@@ -24,7 +16,6 @@ class GraspCollection(object):
     def __init__(self, end_effector=None, grasp_list=None):
         self._uuid = uuid.uuid4()
         self.end_effector = end_effector
-        
         if grasp_list is None:
             self._grasp_list = []
         else:
@@ -93,8 +84,3 @@ class GraspCollection(object):
         """
         with open(file_name, 'wb') as file:
             pickle.dump(GraspCollection(grasp_list=self._grasp_list), file)
-            
-    def limit(self, max_grasps):
-        """限制抓取数量"""
-        self._grasp_list = self._grasp_list[:max_grasps]
-        return self
